@@ -16,14 +16,25 @@ export async function getTurmas(req, res) {
 }
 
 export async function getAluno(req, res) {
-    const { id } = req.params
+    const { cpf } = req.params
     try {
+
         const aluno = await db.query(`
             SELECT * FROM alunos
-            WHERE id_aluno=$1
-        ;`, [id])
+            WHERE cpf=$1
+        ;`, [cpf])
 
-        res.status(200).send(aluno.rows[0])
+        const transicoes = await db.query(`
+            SELECT transicoes.entrada, transicoes.saida, turmas.name_turma FROM transicoes
+            JOIN turmas ON transicoes.id_turma = turmas.id
+            WHERE transicoes.cpf_aluno=$1
+        ;`, [cpf])
+
+        delete aluno.rows[0].id
+        delete aluno.rows[0].id_turma
+        delete aluno.rows[0].created_at
+
+        res.status(200).send({ ...aluno.rows[0], transicoes: transicoes.rows })
     } catch (err) {
         res.status(500).send(err.message)
     }

@@ -1,8 +1,7 @@
 import { db } from "../Database/dataBase.js"
-import bcrypt from "bcrypt"
 
 export async function signUp(req, res) {
-    const { name, cpf, email, foto, turma } = req.body
+    const { name, cpf, email, foto } = req.body
     try {
         const id_turma = res.locals.turma
         await db.query(`
