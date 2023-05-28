@@ -20,7 +20,7 @@ export async function validateSignUp(req, res, next) {
         //PENSAR
         const id_turma = await db.query(`
             SELECT id FROM turmas
-            WHERE name_turma=$1
+            WHERE id=$1
         ;`, [turma])
 
         res.locals.turma = id_turma.rows[0].id

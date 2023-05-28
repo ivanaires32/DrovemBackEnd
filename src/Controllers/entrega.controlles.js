@@ -2,9 +2,6 @@ import { db } from "../Database/dataBase.js";
 
 export async function getDados(req, res) {
     try {
-        const turmas = await db.query(`
-            SELECT name_turma, id FROM turmas
-        ;`)
 
         const alunos = await db.query(`
             SELECT name, id FROM alunos
@@ -14,7 +11,7 @@ export async function getDados(req, res) {
             SELECT name_project, id FROM projetos
         ;`)
 
-        res.status(200).send({ turmas: turmas.rows, alunos: alunos.rows, projetos: projetos.rows })
+        res.status(200).send({ alunos: alunos.rows, projetos: projetos.rows })
 
     } catch (err) {
         res.status(500).send(err.message)
@@ -28,9 +25,9 @@ export async function postEntregar(req, res) {
     try {
 
         await db.query(`
-            INSERT INTO entregas (id_aluno, id_turma, id_project, link_project)
-            VALUES ($1, $2, $3, $4)
-        ;`, [alunoSelect, turmaSelect, projetoSelect, linkProject])
+            INSERT INTO entregas (id_aluno, id_turma, id_project, link_project, result)
+            VALUES ($1, $2, $3, $4, $5)
+        ;`, [alunoSelect, turmaSelect, projetoSelect, linkProject, "Sem nota"])
 
         res.sendStatus(200)
 

@@ -1,5 +1,21 @@
 import { db } from "../Database/dataBase.js"
 
+export async function allTurmasProjetos(req, res) {
+    try {
+        const turmas = await db.query(`
+            SELECT * FROM turmas
+        `)
+
+        const projetos = await db.query(`
+            SELECT * FROM projetos
+        `)
+
+        res.status(200).send({ turmas: turmas.rows, projetos: projetos.rows })
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+}
+
 export async function getTurmas(req, res) {
     const { id_turma } = req.params
     try {

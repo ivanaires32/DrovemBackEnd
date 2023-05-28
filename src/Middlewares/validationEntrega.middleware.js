@@ -5,14 +5,21 @@ export async function validationEntrega(req, res, next) {
     try {
         if (!alunoSelect || !turmaSelect || !projetoSelect || !linkProject) return res.status(404).send("Projeto não enviado")
 
-        const aluno = await db.query(`
-            SELECT alunos.id AS aluno, turmas.id AS turma, projetos.id AS projeto FROM alunos
-            JOIN turmas ON turmas.id = ${turmaSelect}
-            JOIN projetos ON projetos.id = ${projetoSelect}
+        const turmaDiferente = await db.query(`
+            SELECT alunos.id, turmas.id FROM turmas
+            JOIN alunos ON alunos.id_turma = ${turmaSelect}
             WHERE alunos.id = ${alunoSelect}
         `)
 
-        if (!aluno.rows[0].aluno || !aluno.rows[0].turma || !aluno.rows[0].projeto) return res.status(404).send("Projeto não enviado")
+        if (turmaDiferente.rowCount === 0) return res.status(409).send("Aluno não pertence a essa turma")
+
+        const projectRepeated = await db.query(`
+            SELECT entregas.id_project, alunos.id FROM entregas
+            JOIN alunos ON alunos.id = ${alunoSelect}
+            WHERE entregas.id_project = ${projetoSelect}
+        `)
+
+        if (projectRepeated.rowCount !== 0) return res.status(409).send("Projeto já entregue")
 
         res.locals.dadosProjeto = { alunoSelect, turmaSelect, projetoSelect, linkProject }
 
