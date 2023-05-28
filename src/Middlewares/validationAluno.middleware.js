@@ -5,14 +5,14 @@ export async function validationAluno(req, res, next) {
     try {
         if (!id_turma || !cpf) return res.sendStatus(404)
         const turma = await db.query(`
-            SELECT id FROM turma
+            SELECT id FROM turmas
             WHERE id=$1
         ;`, [id_turma])
 
         if (!turma) return res.sendStatus(404)
 
         const aluno = await db.query(`
-            SELECT cpf FROM aluno
+            SELECT cpf FROM alunos
             WHERE cpf=$1
         ;`, [cpf])
 
