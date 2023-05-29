@@ -3,7 +3,6 @@ import { db } from "../Database/dataBase.js"
 export async function validationEntrega(req, res, next) {
     const { alunoSelect, turmaSelect, projetoSelect, linkProject } = req.body
     try {
-        if (!alunoSelect || !turmaSelect || !projetoSelect || !linkProject) return res.status(404).send("Projeto não enviado")
 
         const turmaDiferente = await db.query(`
             SELECT alunos.id, turmas.id FROM turmas

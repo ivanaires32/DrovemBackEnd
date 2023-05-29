@@ -6,7 +6,7 @@ export async function postProjects(req, res) {
     const notas = []
     try {
         const projetos = await db.query(`
-            SELECT entregas.result, alunos.name, alunos.foto, alunos.id_turma AS turma_aluno FROM entregas
+            SELECT entregas.id AS id_entrega, entregas.result, alunos.name, alunos.foto, alunos.id_turma AS turma_aluno FROM entregas
             JOIN alunos ON alunos.id = entregas.id_aluno
             WHERE id_project = $1
         ;`, [id_project])
@@ -20,6 +20,20 @@ export async function postProjects(req, res) {
 
         res.status(200).send(notas)
 
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+}
+
+export async function notas(req, res) {
+    const { id_entrega, nota } = req.body
+    try {
+
+        await db.query(`
+            UPDATE entregas SET result = $1
+            WHERE id = $2
+        ;`, [nota, id_entrega])
+        res.sendStatus(200)
     } catch (err) {
         res.status(500).send(err.message)
     }

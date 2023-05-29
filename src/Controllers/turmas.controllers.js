@@ -55,3 +55,28 @@ export async function getAluno(req, res) {
         res.status(500).send(err.message)
     }
 }
+
+export async function getAllAlunos(req, res) {
+    try {
+        const alunos = await db.query(`
+            SELECT name, id FROM alunos
+        `)
+
+        res.status(200).send(alunos.rows)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+}
+
+export async function transferir(req, res) {
+    const { id_aluno, id_turma } = req.body
+    try {
+        await db.query(`
+            UPDATE alunos SET id_turma = $1 WHERE id = $2
+        ;`, [id_turma, id_aluno])
+
+        res.sendStatus(200)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+}
