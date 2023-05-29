@@ -1,3 +1,4 @@
+import dayjs from "dayjs"
 import { db } from "../Database/dataBase.js"
 
 export async function allTurmasProjetos(req, res) {
@@ -70,10 +71,26 @@ export async function getAllAlunos(req, res) {
 
 export async function transferir(req, res) {
     const { id_aluno, id_turma } = req.body
+    const day = dayjs().format('DD/MM/YYYY')
     try {
         await db.query(`
             UPDATE alunos SET id_turma = $1 WHERE id = $2
         ;`, [id_turma, id_aluno])
+
+        await db.query(`
+            UPDATE transicoes SET saida = $1
+            WHERE id_aluno = $2
+        ;`, [day, id_aluno])
+
+        const cpf = await db.query(`
+            SELECT cpf FROM alunos
+            WHERE id = $1
+        ;`, [id_aluno])
+
+        await db.query(`
+            INSERT INTO transicoes (id_aluno, id_turma, cpf_aluno)
+            VALUES ($1, $2, $3)
+        ;`, [id_aluno, id_turma, cpf.rows[0].cpf])
 
         res.sendStatus(200)
     } catch (err) {

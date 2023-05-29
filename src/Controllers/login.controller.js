@@ -9,10 +9,15 @@ export async function signUp(req, res) {
             VALUES ($1, $2, $3, $4, $5)
         ;`, [name, email, cpf, foto, id_turma])
 
+        const id_aluno = await db.query(`
+            SELECT id FROM alunos
+            WHERE cpf = $1
+        ;`, [cpf])
+
         await db.query(`
-            INSERT INTO transicoes (cpf_aluno, id_turma)
-            VALUES ($1, $2)
-       ;`, [cpf, id_turma])
+            INSERT INTO transicoes (cpf_aluno, id_turma, id_aluno)
+            VALUES ($1, $2, $3)
+       ;`, [cpf, id_turma, id_aluno.rows[0].id])
 
         res.sendStatus(201)
 

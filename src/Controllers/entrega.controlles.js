@@ -25,7 +25,7 @@ export async function postEntregar(req, res) {
     try {
 
         await db.query(`
-            INSERT INTO entregas (id_aluno, id_turma, id_project, link_project, result)
+            INSERT INTO entregas (id_aluno, id_turma, id_project, link, result)
             VALUES ($1, $2, $3, $4, $5)
         ;`, [alunoSelect, turmaSelect, projetoSelect, linkProject, "Sem nota"])
 

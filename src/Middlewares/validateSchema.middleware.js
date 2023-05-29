@@ -4,7 +4,7 @@ export function validationSchema(schema) {
 
         if (validate.error) {
             const erros = validate.error.details.map(d => d.message)
-            res.status(400).send(erros)
+            return res.status(404).send(erros)
         }
 
         next()
